@@ -1,0 +1,23 @@
+name: PR event control
+
+'on':
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - lab-target/pr-event-green
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: PR Gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - run: python3 -B controls/pr_event_gate.py
